@@ -17,4 +17,12 @@ public class Result<T> : Result
             PageSize = pageSize
         };
     }
+
+    public static new Result<T> Failure(params string[] errors)
+    {
+        return new Result<T>
+        {
+            Errors = errors
+        };
+    }
 }

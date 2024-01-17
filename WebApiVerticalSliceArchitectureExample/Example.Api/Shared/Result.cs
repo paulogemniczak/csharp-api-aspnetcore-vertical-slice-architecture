@@ -13,7 +13,7 @@ public class Result
         };
     }
 
-    public static Result ErrorResult(params string[] errors)
+    public static Result Failure(params string[] errors)
     {
         return new Result
         {
