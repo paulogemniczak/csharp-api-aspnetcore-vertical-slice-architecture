@@ -1,4 +1,5 @@
 ﻿using Carter;
+using Example.Api.Contracts;
 using Example.Api.Database;
 using Example.Api.Entities;
 using Example.Api.Shared;

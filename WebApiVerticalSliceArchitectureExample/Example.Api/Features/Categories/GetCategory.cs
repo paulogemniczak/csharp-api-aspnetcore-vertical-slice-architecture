@@ -1,7 +1,8 @@
 ﻿using Carter;
+using Example.Api.Contracts;
 using Example.Api.Database;
-using Example.Api.Entities;
 using Example.Api.Shared;
+using Mapster;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,12 +10,12 @@ namespace Example.Api.Features.Categories;
 
 public class GetCategory
 {
-    public class Query : IRequest<Result<Category>>
+    public class Query : IRequest<Result<CategoryResponse>>
     {
         public int CategoryId { get; set; }
     }
 
-    public class Handler : IRequestHandler<Query, Result<Category>>
+    public class Handler : IRequestHandler<Query, Result<CategoryResponse>>
     {
         private readonly ApplicationDbContext _dbContext;
 
@@ -23,16 +24,16 @@ public class GetCategory
             _dbContext = dbContext;
         }
 
-        public async Task<Result<Category>> Handle(Query request, CancellationToken cancellationToken)
+        public async Task<Result<CategoryResponse>> Handle(Query request, CancellationToken cancellationToken)
         {
             var category = await _dbContext
                 .Categories
                 .FirstOrDefaultAsync(p => p.CategoryId == request.CategoryId, cancellationToken);
 
             if (category is null)
-                return Result<Category>.Failure("Category not found");
+                return Result<CategoryResponse>.Failure("Category not found");
 
-            return Result.SuccessResult(category);
+            return Result.SuccessResult(category.Adapt<CategoryResponse>());
         }
     }
 }

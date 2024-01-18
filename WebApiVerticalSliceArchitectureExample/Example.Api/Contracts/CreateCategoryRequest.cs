@@ -1,4 +1,4 @@
-﻿namespace Example.Api.Features.Categories;
+﻿namespace Example.Api.Contracts;
 
 public class CreateCategoryRequest
 {

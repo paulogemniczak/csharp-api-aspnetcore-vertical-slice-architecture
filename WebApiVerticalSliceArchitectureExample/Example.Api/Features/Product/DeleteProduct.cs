@@ -2,15 +2,14 @@
 using Example.Api.Database;
 using Example.Api.Shared;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
-namespace Example.Api.Features.Categories;
+namespace Example.Api.Features.Product;
 
-public class DeleteCategory
+public class DeleteProduct
 {
     public class Command : IRequest<Result>
     {
-        public int CategoryId { get; set; }
+        public int ProductId { get; set; }
     }
 
     public class Handler : IRequestHandler<Command, Result>
@@ -19,19 +18,17 @@ public class DeleteCategory
 
         public Handler(ApplicationDbContext dbContext)
         {
-            _dbContext = dbContext;
+            this._dbContext = dbContext;
         }
 
         public async Task<Result> Handle(Command request, CancellationToken cancellationToken)
         {
-            var category = await _dbContext
-                .Categories
-                .FirstOrDefaultAsync(p => p.CategoryId == request.CategoryId, cancellationToken);
+            var product = await _dbContext.Products.FindAsync(request.ProductId);
 
-            if (category is null)
-                return Result.Failure("Category not found");
+            if (product is null)
+                return Result.Failure("Product not found");
 
-            _dbContext.Categories.Remove(category);
+            _dbContext.Products.Remove(product);
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             return Result.SuccessResult();
@@ -39,11 +36,11 @@ public class DeleteCategory
     }
 }
 
-public class DeleteCategoryEndpoint : ICarterModule
+public class DeleteProductEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapDelete("/api/categories/{categoryId:int}", async([AsParameters] DeleteCategory.Command command, ISender sender) =>
+        app.MapDelete("/api/products/{productId:int}", async([AsParameters] DeleteProduct.Command command, ISender sender) =>
         {
             var result = await sender.Send(command);
 
